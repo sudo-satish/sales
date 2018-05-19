@@ -17,4 +17,6 @@ Route::get('/', function () {
 
 Auth::routes();
 
+Route::resource('sys/global-value', 'Sys\GlobalValueController');
+
 Route::get('/home', 'HomeController@index')->name('home');
