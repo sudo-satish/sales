@@ -18,5 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::resource('sys/global-value', 'Sys\GlobalValueController');
+Route::resource('rpt/define-report', 'Rpt\DefineReportController');
+Route::resource('rpt/download-report', 'Rpt\DownloadReportController');
 
 Route::get('/home', 'HomeController@index')->name('home');

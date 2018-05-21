@@ -38,7 +38,6 @@
         <tr>
             <td>{{ $value->id }}</td>
             <td>{{ $value->name }}</td>
-            <td>{{ $value->email }}</td>
             <td>{{ $value->code }}</td>
             <td>{{ $value->value }}</td>
             <td>{{ $value->description }}</td>

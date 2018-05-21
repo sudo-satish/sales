@@ -1,16 +1,34 @@
+<!-- {{Session::get('name')}} -->
+<!-- {{Session::get('name')}} -->
+<!-- {{Request::input('name')}} -->
+
+<div class="form-group">
+    {{ Form::hidden('id',null, array('class' => 'form-control')) }}
+</div>
 <div class="form-group">
     {{ Form::label('name', 'Name') }}
-    {{ Form::text('name','', array('class' => 'form-control')) }}
+    {{ Form::text('name', null,array('class' => 'form-control')) }}
 </div>
 
 <div class="form-group">
-    {{ Form::label('email', 'Email') }}
-    {{ Form::email('email', '', array('class' => 'form-control')) }}
+    {{ Form::label('code', 'Code') }}
+    {{ Form::text('code', null, array('class' => 'form-control')) }}
 </div>
 
 <div class="form-group">
-    {{ Form::label('nerd_level', 'Nerd Level') }}
-    {{ Form::select('nerd_level', array('0' => 'Select a Level', '1' => 'Sees Sunlight', '2' => 'Foosball Fanatic', '3' => 'Basement Dweller'),'', array('class' => 'form-control')) }}
+    {{ Form::label('value', 'Value') }}
+    {{ Form::text('value',null, array('class' => 'form-control')) }}
+</div>
+<div class="form-group">
+    {{ Form::label('description', 'Description') }}
+    {{ Form::textarea('description',null, array('class' => 'form-control')) }}
+</div>
+<div class="form-group">
+    {{ Form::label('from_date', 'From Date') }}
+    {{ Form::date('from_date',null, array('class' => 'form-control')) }}
+</div>
+<div class="form-group">
+    {{ Form::label('to_date', 'To Date') }}
+    {{ Form::date('to_date',null, array('class' => 'form-control')) }}
 </div>
 
-{{ Form::submit('Create the Nerd!', array('class' => 'btn btn-primary')) }}
