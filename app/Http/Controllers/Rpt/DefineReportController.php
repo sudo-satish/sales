@@ -50,8 +50,7 @@ class DefineReportController extends Controller
             // $rule['model'] = 'file|mimes:php';
         } else {
             $rule['sql'] = 'required';
-            $rule['template'] = 'required|mimes:xlsx';
-
+            // $rule['template'] = 'required|mimes:xlsx';
         }
                 
         $request->validate($rule);
@@ -94,22 +93,40 @@ class DefineReportController extends Controller
 
             $report->model = $modelPath;
 
-        } else {
-            $template = $request->file('template');
-            $templateName = $template->getClientOriginalName();
-            $templatePath = $template->move(app_path().'\Extras\Rpt'.'\Templates', $templateName);
+        } 
+        
+        // else {
+           
+        //     $template = $request->file('template');
+        //     $templateName = $template->getClientOriginalName(); // Because laravel manage files in storage module only.
+        //     // $templatePath = $template->move(app_path().'\Extras\Rpt'.'\Templates', $templateName);
+        //     $templatePath = $template->move(storage_path().'\Extras\Rpt'.'\Templates', $templateName);
 
             
-            $report->template = $templatePath;
-        }
+        //     $report->template = $templatePath;
+        // }
 
+        if(!$request->hasFile('template')) {
+            array_push($errors, 'Please upload Template');
+            // return redirect()->back()->withErrors('Please upload model');
+        } else {
+            if($request->file('template')->getClientOriginalExtension() !== 'xlsx') {
+                array_push($errors, 'Template file should of xlsx');
+            } else {
+                 $template = $request->file('template');
+                $templateName = $template->getClientOriginalName(); // Because laravel manage files in storage module only.
+                // $templatePath = $template->move(app_path().'\Extras\Rpt'.'\Templates', $templateName);
+                $templatePath = $template->move(storage_path().'\App\Extras\Rpt'.'\Templates', $templateName);
+                $report->template = $templatePath;
+            }
+        }
+        
         // $report = new Report();
         // $report->fill($request->all());
         // $report->controller
         $report->save();
-        dd($report->getAttributes());
-       
-        dd($request->all());
+        return redirect()->back()->with('message', 'Report created successfully');
+        
     }
 
     /**
