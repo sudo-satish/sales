@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class GlobalValue extends Migration
+class GlobalValueCreate extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,7 @@ class GlobalValue extends Migration
      */
     public function up()
     {
-        //
-        Schema::create('GlobalValues', function (Blueprint $table) {
+        Schema::create('global_values', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
             $table->string('code')->unique();

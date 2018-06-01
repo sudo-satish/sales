@@ -6,14 +6,34 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Storage;
 
-Abstract class DefaultController {
+class DefaultController {
     private $modelObj;
+    private $reportModel;
     private $spreadSheetObj;
     private $templatePath;
 
     public function __construct(){
         // parent::__construct();
         $this->spreadSheetObj = new Spreadsheet();
+    }
+
+    /**
+     * Set Report Model
+     * 
+     * @return App\Extras\Rpt\Controllers\DefaultController $this To chain the function
+     */
+    public function setReportModel($report) {
+        $this->reportModel = $report;
+        return $this;
+    }
+
+    /**
+     * To get Report Model.
+     * 
+     * @return App\Http\Models\Rpt\Report $report  
+     */
+    public function getReportModel() {
+        return $this->reportModel;
     }
 
     /**
@@ -48,8 +68,8 @@ Abstract class DefaultController {
     /**
      * Set Maximum exection Time
      */
-    public function setMaxExectionTime() {
-        ini_set('max_execution_time', 500);
+    public function setMaxExectionTime($maxExecTime=500) {
+        ini_set('max_execution_time', $maxExecTime);
     }
 
     /**
@@ -57,17 +77,29 @@ Abstract class DefaultController {
      * 
      * @param Array $options = array() used to customize the report:  future scope. 
      */
-    abstract public function downloadReport($options = array());
+    public function downloadReport($options = array()) {
+        // Logic to generate the simple report.
+        // Get Data array from Model Class.
+        // Get Report Model 
+        // Fetch Max Row
+        // Start printing rows.
+    }
 
     public function generateReport($options = array()) {
         $spreadsheet = $this->getSpreadsheet();
-       
+       // Set Max Exection Time using Model.
+    //    if(isset($this->getReportModel()->max_execution_time) && !empty($this->getReportModel()->max_execution_time)) {
+    //        $this->setMaxExectionTime($this->getReportModel()->max_execution_time);
+    //    }
+
         $this->downloadReport($options);
         // $sheet = $spreadsheet->getActiveSheet();
         // $sheet->setCellValue('A1', 'Hello World !');
 
         $writer = new Xlsx($spreadsheet);
         // $templatePath1 = 'Rpt\Downloads\Hello World.xlsx';
+        // Fetch Template path.
+        
         $templatePath2 = 'D:\laravel p\sales\app\Extras\Rpt\Templates\Pay_Register_satish_201805151721.xlsx';
         // $url = Storage::path($templatePath1);
         $path = copy($templatePath2, storage_path().'\Rpt\Downloads\\'.basename($templatePath2, '.xlsx').time().'.xlsx');
