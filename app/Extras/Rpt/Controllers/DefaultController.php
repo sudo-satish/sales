@@ -8,32 +8,32 @@ use Illuminate\Support\Facades\Storage;
 
 class DefaultController {
     private $modelObj;
-    private $reportModel;
+    private $reportModelObj;
+    private $request;
     private $spreadSheetObj;
     private $templatePath;
 
     public function __construct(){
         // parent::__construct();
-        $this->spreadSheetObj = new Spreadsheet();
+        // $this->spreadSheetObj = new Spreadsheet();
     }
 
-    /**
-     * Set Report Model
-     * 
-     * @return App\Extras\Rpt\Controllers\DefaultController $this To chain the function
-     */
-    public function setReportModel($report) {
-        $this->reportModel = $report;
+    public function setRequest($request) {
+        $this->request = $request;
         return $this;
     }
 
-    /**
-     * To get Report Model.
-     * 
-     * @return App\Http\Models\Rpt\Report $report  
-     */
+    public function getRequest() {
+        return $this->request;
+    }
+
+    public function setReportModel($reportModel) {
+        $this->reportModelObj = $reportModel;
+        return $this;
+    }
+
     public function getReportModel() {
-        return $this->reportModel;
+        return $this->reportModelObj;
     }
 
     /**
@@ -41,6 +41,15 @@ class DefaultController {
      */
     public function getSpreadsheet() {
         return $this->spreadSheetObj; 
+    }
+    
+    /**
+     * Set PHP Excel Object 
+     * Actually we use it to load the template file.
+     */
+    public function setSpreadsheet($spreadsheet) {
+        $this->spreadSheetObj = $spreadsheet;
+        return $spreadsheet; 
     }
 
     /**
@@ -78,45 +87,86 @@ class DefaultController {
      * @param Array $options = array() used to customize the report:  future scope. 
      */
     public function downloadReport($options = array()) {
-        // Logic to generate the simple report.
-        // Get Data array from Model Class.
-        // Get Report Model 
-        // Fetch Max Row
-        // Start printing rows.
+
+        $sql = $this->getReportModel()->sql;
+        $dataRow = $this->getModel()->fetchDataFromQuery($sql);
+        $dataRow = (array) $dataRow;
+
+        $initialRowIndex =  $this->getReportModel()->row_start_index;
+        $spreadsheet = $this->getSpreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $dataRow = json_decode(json_encode($dataRow), true);
+
+        // $sheet->setCellValue('A1', 'Hello World !');
+        $row = $initialRowIndex;
+        $initialColIndex = 1;
+        foreach($dataRow as $index => $data) {
+            $col = $initialColIndex;
+            foreach($data as $key => $value) {
+                // echo '<br> '.$value;
+                $sheet->setCellValueByColumnAndRow($col, $row, $value);
+                $col++;
+            }
+            $row++;
+        }
     }
 
     public function generateReport($options = array()) {
-        $spreadsheet = $this->getSpreadsheet();
-       // Set Max Exection Time using Model.
-    //    if(isset($this->getReportModel()->max_execution_time) && !empty($this->getReportModel()->max_execution_time)) {
-    //        $this->setMaxExectionTime($this->getReportModel()->max_execution_time);
-    //    }
+        // $spreadsheet = $this->getSpreadsheet();
+        $templatePath = $this->getReportModel()->template;
+        $downloadedFile = $this->copyTemplateFile();
+        if(!$downloadedFile) {
+            echo ' Failed to copy the path';
+        } // Returns false or newPath <= To copy the template file to report generate path.
+        // echo $newPath; exit;
+        $inputFileType = 'Xlsx';
+        // $inputFileType = 'Xls';
+        $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
+        // $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
+        // $spreadsheet = $reader->load($templatePath);
+        $spreadsheet = $reader->load($downloadedFile);
+
+        $this->setSpreadsheet($spreadsheet);
 
         $this->downloadReport($options);
-        // $sheet = $spreadsheet->getActiveSheet();
-        // $sheet->setCellValue('A1', 'Hello World !');
-
         $writer = new Xlsx($spreadsheet);
-        // $templatePath1 = 'Rpt\Downloads\Hello World.xlsx';
-        // Fetch Template path.
-        
-        $templatePath2 = 'D:\laravel p\sales\app\Extras\Rpt\Templates\Pay_Register_satish_201805151721.xlsx';
-        // $url = Storage::path($templatePath1);
-        $path = copy($templatePath2, storage_path().'\Rpt\Downloads\\'.basename($templatePath2, '.xlsx').time().'.xlsx');
-        
-        echo $path; exit;
-        $url = Storage::copyFrom($templatePath2, basename($templatePath2, '.xlx'));
+       
+        // $writer->save($generateReport);
+        $writer->save($downloadedFile);
+        // return Storage::download($generateReport);
+        echo '<br>'.$downloadedFile; 
+        return Storage::download($downloadedFile);
+        // return Storage::download('app'
+        //                     .DIRECTORY_SEPARATOR.'extras'
+        //                     .DIRECTORY_SEPARATOR.'rpt'
+        //                     .DIRECTORY_SEPARATOR.'downloaded'
+        //                     .DIRECTORY_SEPARATOR.$this->getReportModel()->code.'_'.now().'.xlsx');
+    }
 
-        // $url = $templatePath;
-        echo '<br>'.$url.'<br>';
-        // echo $url; exit;
-        // return Storage::download('Rpt\Downloads\Hello World.xlsx');
-        // echo $url;
-        // var_dump(file_exists($url));
-        // $realPath = absolutepath($url);
-        // echo $url;
-        // exit;
-        $writer->save($url);
-        return Storage::download($url);
+    private function copyTemplateFile() {
+
+        
+        
+        $templatePath = $this->getReportModel()->template;
+        $generateReport = storage_path()
+                            .DIRECTORY_SEPARATOR.'app'
+                            .DIRECTORY_SEPARATOR.'extras'
+                            .DIRECTORY_SEPARATOR.'rpt'
+                            .DIRECTORY_SEPARATOR.'downloaded'
+                            .DIRECTORY_SEPARATOR.$this->getReportModel()->code.'_'.time().'.xlsx';
+       
+        $path = pathinfo($generateReport);
+        if (!file_exists($path['dirname'])) {
+            mkdir($path['dirname'], 0777, true);
+        }
+
+        $copiedPath = copy($templatePath,$generateReport);
+        if (!$copiedPath) {
+            echo "copy failed \n";
+        } else {
+            return $generateReport; 
+        }
+        // return copy($templatePath, $generateReport);
+
     }
 }
