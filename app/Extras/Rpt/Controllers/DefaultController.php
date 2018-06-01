@@ -6,8 +6,10 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\Storage;
 
-Abstract class DefaultController {
+class DefaultController {
     private $modelObj;
+    private $reportModelObj;
+    private $request;
     private $spreadSheetObj;
     private $templatePath;
 
@@ -16,6 +18,23 @@ Abstract class DefaultController {
         $this->spreadSheetObj = new Spreadsheet();
     }
 
+    public function setRequest($request) {
+        $this->request = $request;
+        return $this;
+    }
+
+    public function getRequest() {
+        return $this->request;
+    }
+
+    public function setReportModel($reportModel) {
+        $this->reportModelObj = $reportModel;
+        return $this;
+    }
+
+    public function getReportModel() {
+        return $this->reportModelObj;
+    }
     /**
      * Get PHP Excel Object
      */
@@ -57,7 +76,13 @@ Abstract class DefaultController {
      * 
      * @param Array $options = array() used to customize the report:  future scope. 
      */
-    abstract public function downloadReport($options = array());
+    public function downloadReport($options = array()) {
+
+        $sql = $this->getReportModel()->sql;
+        $data = $this->getModel()->fetchDataFromQuery($sql);
+        
+        dd($data);
+    }
 
     public function generateReport($options = array()) {
         $spreadsheet = $this->getSpreadsheet();
@@ -65,9 +90,10 @@ Abstract class DefaultController {
         $this->downloadReport($options);
         // $sheet = $spreadsheet->getActiveSheet();
         // $sheet->setCellValue('A1', 'Hello World !');
-
+        // $isCustom = $this->getReportModel()->custom;
+        exit;
         $writer = new Xlsx($spreadsheet);
-        // $templatePath1 = 'Rpt\Downloads\Hello World.xlsx';
+        
         $templatePath2 = 'D:\laravel p\sales\app\Extras\Rpt\Templates\Pay_Register_satish_201805151721.xlsx';
         // $url = Storage::path($templatePath1);
         $path = copy($templatePath2, storage_path().'\Rpt\Downloads\\'.basename($templatePath2, '.xlsx').time().'.xlsx');

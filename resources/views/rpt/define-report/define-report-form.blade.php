@@ -2,6 +2,7 @@
 <div class="form-group">
     {{ Form::hidden('id',null, array('class' => 'form-control')) }}
 </div>
+
 <div class="form-group">
     {{ Form::label('name', 'Name') }}
     {{ Form::text('name', null,array('class' => 'form-control')) }}
@@ -11,7 +12,6 @@
     {{ Form::label('code', 'Code') }}
     {{ Form::text('code', null, array('class' => 'form-control')) }}
 </div>
-
 
 <div class="form-check">
     {{ Form::checkbox('custom','Y',null, array('class' => 'form-check-input')) }}
