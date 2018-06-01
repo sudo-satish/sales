@@ -26,7 +26,7 @@ class DownloadReportController extends Controller
     public function downloadReport($request) {
         //making assertion here as the testing is not working. remove these assertion after finishing the task.
 
-        $reportId = 1;
+        $reportId = 2;
         $report = Report::find($reportId);
         $isCustom = $report->custom;
         if($isCustom == 'Y') {
