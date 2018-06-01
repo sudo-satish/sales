@@ -113,48 +113,59 @@ class DefaultController {
     public function generateReport($options = array()) {
         // $spreadsheet = $this->getSpreadsheet();
         $templatePath = $this->getReportModel()->template;
+        $downloadedFile = $this->copyTemplateFile();
+        if(!$downloadedFile) {
+            echo ' Failed to copy the path';
+        } // Returns false or newPath <= To copy the template file to report generate path.
+        // echo $newPath; exit;
         $inputFileType = 'Xlsx';
         // $inputFileType = 'Xls';
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
         // $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
-        $spreadsheet = $reader->load($templatePath);
+        // $spreadsheet = $reader->load($templatePath);
+        $spreadsheet = $reader->load($downloadedFile);
 
         $this->setSpreadsheet($spreadsheet);
 
         $this->downloadReport($options);
-        // $sheet = $spreadsheet->getActiveSheet();
-        // $sheet->setCellValue('A1', 'Hello World !');
-        // $isCustom = $this->getReportModel()->custom;
-        // exit;
         $writer = new Xlsx($spreadsheet);
-        
-        // $templatePath2 = 'D:\laravel p\sales\app\Extras\Rpt\Templates\Pay_Register_satish_201805151721.xlsx';
-        // $url = Storage::path($templatePath1);
-        // $path = copy($templatePath2, storage_path().'\Rpt\Downloads\\'.basename($templatePath2, '.xlsx').time().'.xlsx');
-        
-        // echo $path; exit;
-        // $url = Storage::copyFrom($templatePath2, basename($templatePath2, '.xlx'));
+       
+        // $writer->save($generateReport);
+        $writer->save($downloadedFile);
+        // return Storage::download($generateReport);
+        echo '<br>'.$downloadedFile; 
+        return Storage::download($downloadedFile);
+        // return Storage::download('app'
+        //                     .DIRECTORY_SEPARATOR.'extras'
+        //                     .DIRECTORY_SEPARATOR.'rpt'
+        //                     .DIRECTORY_SEPARATOR.'downloaded'
+        //                     .DIRECTORY_SEPARATOR.$this->getReportModel()->code.'_'.now().'.xlsx');
+    }
 
-        // $url = $templatePath;
-        // echo '<br>'.$url.'<br>';
-        // echo $url; exit;
-        // return Storage::download('Rpt\Downloads\Hello World.xlsx');
-        // echo $url;
-        // var_dump(file_exists($url));
-        // $realPath = absolutepath($url);
-        // echo $url;
-        // exit;
+    private function copyTemplateFile() {
+
+        
+        
+        $templatePath = $this->getReportModel()->template;
         $generateReport = storage_path()
                             .DIRECTORY_SEPARATOR.'app'
                             .DIRECTORY_SEPARATOR.'extras'
                             .DIRECTORY_SEPARATOR.'rpt'
                             .DIRECTORY_SEPARATOR.'downloaded'
-                            .DIRECTORY_SEPARATOR.$this->getReportModel()->code.'_'.now().'.xlsx';
-        $returnPath = Storage::copy($templatePath, $generateReport);
+                            .DIRECTORY_SEPARATOR.$this->getReportModel()->code.'_'.time().'.xlsx';
+       
+        $path = pathinfo($generateReport);
+        if (!file_exists($path['dirname'])) {
+            mkdir($path['dirname'], 0777, true);
+        }
 
-        echo $returnPath; exit;
-                            // echo '<br>'.$generateReport; exit;
-        $writer->save($generateReport);
-        return Storage::download($generateReport);
+        $copiedPath = copy($templatePath,$generateReport);
+        if (!$copiedPath) {
+            echo "copy failed \n";
+        } else {
+            return $generateReport; 
+        }
+        // return copy($templatePath, $generateReport);
+
     }
 }
