@@ -57,13 +57,12 @@ class DefineReportController extends Controller
 
         $report = new Report();
         $report->fill($request->all());
-
+        $errors = [];
         if($request->input('custom') == 'Y') {
-            $errors = [];
+            
             if(!$request->hasFile('controller')) {
                 // $errors = ['Please Upload controller'];
                 array_push($errors, 'Please Upload controller');
-                // return redirect()->back()->withErrors('Please upload contoller');
             } else {
                 if($request->file('controller')->getClientOriginalExtension() !== 'php') {
                     array_push($errors, 'Controller file should of php');
@@ -71,54 +70,61 @@ class DefineReportController extends Controller
             }
             if(!$request->hasFile('model')) {
                 array_push($errors, 'Please upload model');
-                // return redirect()->back()->withErrors('Please upload model');
             } else {
                 if($request->file('model')->getClientOriginalExtension() !== 'php') {
                     array_push($errors, 'Model file should of php');
                 }
             }
 
-            if(!empty($errors)) {
-                return redirect()->back()->withErrors($errors)->withInput();
+            if(empty($errors)) {
+
+                $controller = $request->file('controller');
+                $controllerName = $controller->getClientOriginalName();
+                $controllerPath = $controller->move(
+                                                    app_path()
+                                                    .DIRECTORY_SEPARATOR.'Extras'
+                                                    .DIRECTORY_SEPARATOR.'Rpt'
+                                                    .DIRECTORY_SEPARATOR.'Controllers',
+                                                    $controllerName
+                                                );
+                $report->controller = $controllerPath;
+    
+                $model = $request->file('model');
+                $modelName = $model->getClientOriginalName();
+                $modelPath = $model->move(
+                                            app_path()
+                                            .DIRECTORY_SEPARATOR.'Extras'
+                                            .DIRECTORY_SEPARATOR.'Rpt'
+                                            .DIRECTORY_SEPARATOR.'Models', 
+                                            $modelName
+                                        );
+    
+                $report->model = $modelPath;
             }
-
-            $controller = $request->file('controller');
-            $controllerName = $controller->getClientOriginalName();
-            $controllerPath = $controller->move(app_path().'\Extras\Rpt'.'\Controllers', $controllerName);
-            $report->controller = $controllerPath;
-
-            $model = $request->file('model');
-            $modelName = $model->getClientOriginalName();
-            $modelPath = $model->move(app_path().'\Extras\Rpt'.'\Models', $modelName);
-
-            $report->model = $modelPath;
-
         } 
-        
-        // else {
-           
-        //     $template = $request->file('template');
-        //     $templateName = $template->getClientOriginalName(); // Because laravel manage files in storage module only.
-        //     // $templatePath = $template->move(app_path().'\Extras\Rpt'.'\Templates', $templateName);
-        //     $templatePath = $template->move(storage_path().'\Extras\Rpt'.'\Templates', $templateName);
-
-            
-        //     $report->template = $templatePath;
-        // }
 
         if(!$request->hasFile('template')) {
             array_push($errors, 'Please upload Template');
-            // return redirect()->back()->withErrors('Please upload model');
         } else {
             if($request->file('template')->getClientOriginalExtension() !== 'xlsx') {
                 array_push($errors, 'Template file should of xlsx');
             } else {
-                 $template = $request->file('template');
+                $template = $request->file('template');
                 $templateName = $template->getClientOriginalName(); // Because laravel manage files in storage module only.
-                // $templatePath = $template->move(app_path().'\Extras\Rpt'.'\Templates', $templateName);
-                $templatePath = $template->move(storage_path().'\App\Extras\Rpt'.'\Templates', $templateName);
+                $templatePath = $template->move(
+                            storage_path()
+                            .DIRECTORY_SEPARATOR.'app'
+                            .DIRECTORY_SEPARATOR.'extras'
+                            .DIRECTORY_SEPARATOR.'rpt'
+                            .DIRECTORY_SEPARATOR.'templates', 
+                            $templateName
+                        );
                 $report->template = $templatePath;
             }
+        }
+        
+        if(!empty($errors)) {
+            return redirect()->back()->withErrors($errors)->withInput();
         }
         
         // $report = new Report();
