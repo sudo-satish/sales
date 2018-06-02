@@ -6,7 +6,7 @@
 /.idea
 /.vscode
 /.vagrant
-/config
+/config/app.php
 Homestead.json
 Homestead.yaml
 npm-debug.log
