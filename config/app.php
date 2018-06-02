@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Sales'),
+    'name' => env('APP_NAME', 'Laravel'),
 
     /*
     |--------------------------------------------------------------------------
@@ -26,8 +26,7 @@ return [
     |
     */
 
-    // 'env' => env('APP_ENV', 'production'),
-    'env' => env('APP_ENV', 'local'),
+    'env' => env('APP_ENV', 'production'),
 
     /*
     |--------------------------------------------------------------------------
@@ -40,8 +39,7 @@ return [
     |
     */
 
-    // 'debug' => env('APP_DEBUG', false),
-    'debug' => env('APP_DEBUG', true),
+    'debug' => env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -54,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'https://sales-module.herokuapp.com/'),
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -106,8 +104,7 @@ return [
     |
     */
 
-    // 'key' => env('APP_KEY'),
-    'key' => 'base64:DpNH3MCIardkUVIHuU14Lv5Atw4JBXgOvvSBjcSLhxE=',
+    'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
 
