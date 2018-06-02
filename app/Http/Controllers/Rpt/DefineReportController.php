@@ -56,7 +56,7 @@ class DefineReportController extends Controller
         $request->validate($rule);
 
         $report = new Report();
-        $report->fill($request->all());
+        $report->fill($request->except('id'));
         $errors = [];
 
         if($request->input('custom') == 'Y') {
