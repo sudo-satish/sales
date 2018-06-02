@@ -1,17 +1,6 @@
-@extends('layouts.app')
+@extends('sys.global-value.layout')
 
-@section('content')
-<div class="container">
-
-    <nav class="navbar navbar-inverse">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="{{ URL::to('sys/global-value') }}">Global Values</a>
-        </div>
-        <ul class="nav navbar-nav">
-            <li><a href="{{ URL::to('sys/global-value') }}">View All Global Values</a></li>
-            <li><a href="{{ URL::to('sys/global-value/create') }}">Create a Global Value</a>
-        </ul>
-    </nav>
+@section('resource-body')
 
 <h1>All the Global Values</h1>
 
@@ -62,5 +51,4 @@
     </tbody>
 </table>
 
-</div>
 @endsection

@@ -12,8 +12,19 @@ class DefaultModel {
     private $request;
 
     public function fetchDataFromQuery($sql) {
+        // $sql = eval($sql);
+        eval("\$sql = \"$sql\";");
+        $this->printQueryForDebug($sql);
         return DB::select($sql);
     }
+
+    public function printQueryForDebug($sql) {
+        $env = env('APP_ENV', 'production');
+        if($this->getReportModel()->debug == 'Y' && $env !== 'production') {
+            echo $sql; exit;
+        }
+    }
+
     public function setRequest($request) {
         $this->request = $request;
         return $this;

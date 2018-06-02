@@ -19,6 +19,9 @@ Auth::routes();
 
 Route::resource('sys/global-value', 'Sys\GlobalValueController');
 Route::resource('rpt/define-report', 'Rpt\DefineReportController');
+Route::post('rpt/download-report/download', 'Rpt\DownloadReportController@downloadReport');
+Route::post('rpt/download-report/get-group-form', 'Rpt\DownloadReportController@getGroupForm');
+Route::post('rpt/download-report/get-report-list', 'Rpt\DownloadReportController@getReportList');
 Route::resource('rpt/download-report', 'Rpt\DownloadReportController');
 
 Route::get('/home', 'HomeController@index')->name('home');

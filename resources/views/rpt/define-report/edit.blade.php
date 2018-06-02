@@ -15,9 +15,11 @@
 
         <!-- if there are creation errors, they will show here -->
 
-        {{ Form::open(array('url' => 'rpt/define-report', 'method' => 'post','files' => true)) }}
-            @include('rpt.define-report.define-report-form')    
-        {{ Form::submit('Create a report', array('class' => 'btn btn-primary')) }}
+        {{ Form::model($report, ['url' => ['rpt/define-report', $report->id], 'files' => true]) }}
+            
+            @method('put');
+            @include('rpt.define-report.define-report-form')
+        {{ Form::submit('Update a report', array('class' => 'btn btn-primary')) }}
 
         {{ Form::close() }}
 

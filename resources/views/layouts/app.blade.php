@@ -16,7 +16,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Raleway:300,400,600" rel="stylesheet" type="text/css">
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -34,7 +34,15 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav mr-auto">
-
+                        <li class="nav-item">
+                            <a class="nav-link" href="/sys/global-value">Global Value</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rpt/define-report">Reports</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/rpt/download-report">Download Report</a>
+                        </li>
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -71,5 +79,8 @@
             @yield('content')
         </main>
     </div>
+
+    <script src="{{ asset('js/common.js') }}" defer></script>
+
 </body>
 </html>

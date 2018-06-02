@@ -15,48 +15,75 @@ class DownloadReportController extends Controller
      */
     public function index(Request $request)
     {
-        $this->downloadReport($request);
-        
-        return view('rpt/download-report/.index', ['reports' => Report::all()]);
+        // return $this->downloadReport($request);->pluck('name');
+        $reports = Report::all();
+        $viewData = [
+                        'reports' => $reports, 
+                        'dropDownReport' => $reports->pluck('name','id'),
+                        'dropDownGroup' => $reports->pluck('group','group'),
+                    ];
+        return view('rpt.download-report.index', $viewData);
+    }
+
+    public function getGroupForm(Request $request) {
+        return view('rpt.group.'.$request->input('group_name'));
+    }
+
+    public function getReportList(Request $request) {
+        $reportList = Report::all()->where('group', $request->input('group_name'))->pluck('name', 'id') ;
+        return view('rpt.download-report.get-report-list', ['reportList' => $reportList]);
+        // return response($reportList);
     }
 
     /**
      * All logic download the report is written here only.
      */
-    public function downloadReport($request) {
+    public function downloadReport(Request $request) {
         //making assertion here as the testing is not working. remove these assertion after finishing the task.
 
-        $reportId = 2;
+        // dd($request->input('satish'));
+        // $query = " Select * from global_values where 1 and if('{$request->input('from_date')}' = '', 0, '{$request->input('from_date')}' < from_date)";
+
+        // echo $query;
+        //  exit;  
+
+        if(!$request->input('report')) {
+            return redirect()->back()->with('error', ' Please give a report id');
+        }
+
+        $reportId = $request->input('report');
         $report = Report::find($reportId);
         $isCustom = $report->custom;
         if($isCustom == 'Y') {
-            echo ' Custom Report !! will work on it later, ';
+            // =================== Controller ====================
+            $file = pathinfo($report->controller);
+            $dirName = $file['dirname'];
+            $filename = $file['filename'];
+            $className = $dirName.DIRECTORY_SEPARATOR.$filename;
+            $controller = new $className();
+
+            // =================== Model ==========================
+            $modelFile = pathinfo($report->model);
+            $modelDirName = $modelFile['dirname'];
+            $modelFilename = $modelFile['filename'];
+            $modelClassName = $modelDirName.DIRECTORY_SEPARATOR.$modelFilename;
+            $model = new $modelClassName();
+
         } else {
-            echo ' Simple Report';
-            $defaultController = new \App\Extras\Rpt\Controllers\DefaultController();
-            $defaultModel = new \App\Extras\Rpt\Models\DefaultModel();
-
-            $defaultController->setModel($defaultModel);
-
-            $defaultController->setRequest($request);
-            $defaultController->setReportModel($report);
-            
-            $defaultModel->setRequest($request);
-            $defaultModel->setReportModel($report);
-            
-            // =========== Start generating report ===========
-            $defaultController->generateReport();
+            $controller = new \App\Extras\Rpt\Controllers\DefaultController();
+            $model = new \App\Extras\Rpt\Models\DefaultModel();
         }
 
-        dd($report->name);
+        $controller->setModel($model);
 
-        $fileLocation = 'D:\laravel p\sales\app/Extras/Rpt/Controllers\PFReport.php';
-        $controllerClass = '\App\Extras\Rpt\Controllers'.'\\'.basename($fileLocation,'.php');
-
-        $controller =  new $controllerClass();
-        // $controller->downloadReport();
+        $controller->setRequest($request);
+        $controller->setReportModel($report);
+        
+        $model->setRequest($request);
+        $model->setReportModel($report);
+        
+        // =========== Start generating report ===========
         return $controller->generateReport();
-        exit;
     }
 
     /**

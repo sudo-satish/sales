@@ -14,8 +14,6 @@ class DefaultController {
     private $templatePath;
 
     public function __construct(){
-        // parent::__construct();
-        // $this->spreadSheetObj = new Spreadsheet();
     }
 
     public function setRequest($request) {
@@ -103,7 +101,6 @@ class DefaultController {
         foreach($dataRow as $index => $data) {
             $col = $initialColIndex;
             foreach($data as $key => $value) {
-                // echo '<br> '.$value;
                 $sheet->setCellValueByColumnAndRow($col, $row, $value);
                 $col++;
             }
@@ -114,38 +111,29 @@ class DefaultController {
     public function generateReport($options = array()) {
         // $spreadsheet = $this->getSpreadsheet();
         $templatePath = $this->getReportModel()->template;
-        $downloadedFile = $this->copyTemplateFile();
-        if(!$downloadedFile) {
-            echo ' Failed to copy the path';
-        } // Returns false or newPath <= To copy the template file to report generate path.
-        // echo $newPath; exit;
+        try {
+            $downloadedFile = $this->copyTemplateFile();
+            if(!$downloadedFile) {
+                return redirect()->back()->withError('Could not replicate the template to generate the report.');
+            } // Returns false or newPath <= To copy the template file to report generate path.
+        } catch(Exception $e) {
+           return redirect()->back()->withError('Could not replicate the template to generate the report.'); 
+        }
+        
         $inputFileType = 'Xlsx';
         // $inputFileType = 'Xls';
         $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReader($inputFileType);
-        // $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
-        // $spreadsheet = $reader->load($templatePath);
         $spreadsheet = $reader->load($downloadedFile);
 
         $this->setSpreadsheet($spreadsheet);
 
         $this->downloadReport($options);
         $writer = new Xlsx($spreadsheet);
-       
-        // $writer->save($generateReport);
         $writer->save($downloadedFile);
-        // return Storage::download($generateReport);
-        echo '<br>'.$downloadedFile; 
-        return Storage::download($downloadedFile);
-        // return Storage::download('app'
-        //                     .DIRECTORY_SEPARATOR.'extras'
-        //                     .DIRECTORY_SEPARATOR.'rpt'
-        //                     .DIRECTORY_SEPARATOR.'downloaded'
-        //                     .DIRECTORY_SEPARATOR.$this->getReportModel()->code.'_'.now().'.xlsx');
+        return response()->download($downloadedFile);
     }
 
     private function copyTemplateFile() {
-
-        
         
         $templatePath = $this->getReportModel()->template;
         $generateReport = storage_path()
@@ -160,13 +148,12 @@ class DefaultController {
             mkdir($path['dirname'], 0777, true);
         }
 
-        $copiedPath = copy($templatePath,$generateReport);
+        $copiedPath = copy($templatePath, $generateReport);
         if (!$copiedPath) {
-            echo "copy failed \n";
+            return false;
         } else {
             return $generateReport; 
         }
-        // return copy($templatePath, $generateReport);
 
     }
 }

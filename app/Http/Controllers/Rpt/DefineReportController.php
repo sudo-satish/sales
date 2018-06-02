@@ -58,6 +58,7 @@ class DefineReportController extends Controller
         $report = new Report();
         $report->fill($request->all());
         $errors = [];
+
         if($request->input('custom') == 'Y') {
             
             if(!$request->hasFile('controller')) {
@@ -80,25 +81,40 @@ class DefineReportController extends Controller
 
                 $controller = $request->file('controller');
                 $controllerName = $controller->getClientOriginalName();
-                $controllerPath = $controller->move(
-                                                    app_path()
-                                                    .DIRECTORY_SEPARATOR.'Extras'
-                                                    .DIRECTORY_SEPARATOR.'Rpt'
-                                                    .DIRECTORY_SEPARATOR.'Controllers',
-                                                    $controllerName
-                                                );
+                $controller->move(
+                                app_path()
+                                // DIRECTORY_SEPARATOR.'App'
+                                .DIRECTORY_SEPARATOR.'Extras'
+                                .DIRECTORY_SEPARATOR.'Rpt'
+                                .DIRECTORY_SEPARATOR.'Controllers',
+                                $controllerName
+                            );
+
+                $controllerPath = DIRECTORY_SEPARATOR.'App'
+                                .DIRECTORY_SEPARATOR.'Extras'
+                                .DIRECTORY_SEPARATOR.'Rpt'
+                                .DIRECTORY_SEPARATOR.'Controllers'
+                                .DIRECTORY_SEPARATOR.$controllerName;
+
                 $report->controller = $controllerPath;
     
                 $model = $request->file('model');
                 $modelName = $model->getClientOriginalName();
-                $modelPath = $model->move(
-                                            app_path()
-                                            .DIRECTORY_SEPARATOR.'Extras'
-                                            .DIRECTORY_SEPARATOR.'Rpt'
-                                            .DIRECTORY_SEPARATOR.'Models', 
-                                            $modelName
-                                        );
-    
+
+                $model->move(
+                            app_path()
+                            // DIRECTORY_SEPARATOR.'App'
+                            .DIRECTORY_SEPARATOR.'Extras'
+                            .DIRECTORY_SEPARATOR.'Rpt'
+                            .DIRECTORY_SEPARATOR.'Models', 
+                            $modelName
+                        );
+                $modelPath =    DIRECTORY_SEPARATOR.'App'
+                                .DIRECTORY_SEPARATOR.'Extras'
+                                .DIRECTORY_SEPARATOR.'Rpt'
+                                .DIRECTORY_SEPARATOR.'Models'
+                                .DIRECTORY_SEPARATOR.$modelName ;
+
                 $report->model = $modelPath;
             }
         } 
@@ -138,23 +154,27 @@ class DefineReportController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Http\Models\Rpt\Report  $report
+     * @param  \App\Http\Models\Rpt\Report  $defineReport
      * @return \Illuminate\Http\Response
      */
-    public function show(Report $report)
+    public function show(Report $defineReport)
     {
         //
+        // dd($defineReport); 
+        return redirect('rpt/define-report/'.$defineReport->id.'/edit');
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Rpt\Report  $report
+     * @param  \App\Models\Rpt\Report  $defineReport
      * @return \Illuminate\Http\Response
      */
-    public function edit(Report $report)
+    public function edit(Report $defineReport)
     {
         //
+        // dd($defineReport);
+        return view('rpt.define-report.edit', ['report' => $defineReport] );
     }
 
     /**
@@ -164,9 +184,101 @@ class DefineReportController extends Controller
      * @param  \App\Models\Rpt\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Report $report)
+    public function update(Request $request, Report $defineReport)
     {
         //
+        $fillArr = $request->except(['controller','template','model']);
+        // dd($fillArr);
+        $defineReport->fill($fillArr);
+        $defineReport->custom = $request->has('custom') ? $request->input('custom') : '';
+        $defineReport->debug = $request->has('debug') ? $request->input('debug') : '';
+        $defineReport->active = $request->has('active') ? $request->input('active') : '';
+        $errors = [];
+
+        if($request->input('custom') == 'Y') {
+            if($request->hasFile('controller')) {
+                if($request->file('controller')->getClientOriginalExtension() !== 'php') {
+                    array_push($errors, 'Controller file should of php');
+                } else {
+                    $controller = $request->file('controller');
+                    $controllerName = $controller->getClientOriginalName();
+                    $controller->move(
+                                    app_path()
+                                    // DIRECTORY_SEPARATOR.'App'
+                                    .DIRECTORY_SEPARATOR.'Extras'
+                                    .DIRECTORY_SEPARATOR.'Rpt'
+                                    .DIRECTORY_SEPARATOR.'Controllers',
+                                    $controllerName
+                                );
+
+                    $controllerPath = DIRECTORY_SEPARATOR.'App'
+                                    .DIRECTORY_SEPARATOR.'Extras'
+                                    .DIRECTORY_SEPARATOR.'Rpt'
+                                    .DIRECTORY_SEPARATOR.'Controllers'
+                                    .DIRECTORY_SEPARATOR.$controllerName;
+
+                    $defineReport->controller = $controllerPath;
+                }
+            } else {
+                if(!$defineReport->controller) {
+                     array_push($errors, 'Please upload controller for custom report.');
+                }
+            }
+
+            if($request->hasFile('model')) {
+                if($request->file('model')->getClientOriginalExtension() !== 'php') {
+                    array_push($errors, 'Model file should of php');
+                } else {
+                    $model = $request->file('model');
+                    $modelName = $model->getClientOriginalName();
+
+                    $model->move(
+                                app_path()
+                                // DIRECTORY_SEPARATOR.'App'
+                                .DIRECTORY_SEPARATOR.'Extras'
+                                .DIRECTORY_SEPARATOR.'Rpt'
+                                .DIRECTORY_SEPARATOR.'Models', 
+                                $modelName
+                            );
+                    $modelPath =    DIRECTORY_SEPARATOR.'App'
+                                    .DIRECTORY_SEPARATOR.'Extras'
+                                    .DIRECTORY_SEPARATOR.'Rpt'
+                                    .DIRECTORY_SEPARATOR.'Models'
+                                    .DIRECTORY_SEPARATOR.$modelName ;
+
+                    $defineReport->model = $modelPath;
+                }
+            } else {
+                if(!$defineReport->model) {
+                     array_push($errors, 'Please upload model for custom report.');
+                }
+            }
+        } 
+        if($request->hasFile('template')) {
+            if($request->file('template')->getClientOriginalExtension() !== 'xlsx') {
+                array_push($errors, 'Template file should of xlsx');
+            } else {
+                $template = $request->file('template');
+                $templateName = $template->getClientOriginalName(); // Because laravel manage files in storage module only.
+                $templatePath = $template->move(
+                            storage_path()
+                            .DIRECTORY_SEPARATOR.'app'
+                            .DIRECTORY_SEPARATOR.'extras'
+                            .DIRECTORY_SEPARATOR.'rpt'
+                            .DIRECTORY_SEPARATOR.'templates', 
+                            $templateName
+                        );
+                $defineReport->template = $templatePath;
+            }
+        }
+        
+        if(!empty($errors)) {
+            return redirect()->back()->withErrors($errors)->withInput();
+        }
+
+        $defineReport->save();
+        
+        return redirect('rpt/define-report/'.$defineReport->id.'/edit')->with('message', 'Successfully updated report');
     }
 
     /**
@@ -175,7 +287,7 @@ class DefineReportController extends Controller
      * @param  \App\Models\Rpt\Report  $report
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Report $report)
+    public function destroy(Report $defineReport)
     {
         //
     }
