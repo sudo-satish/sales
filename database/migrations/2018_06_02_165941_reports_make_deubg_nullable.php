@@ -15,7 +15,7 @@ class ReportsMakeDeubgNullable extends Migration
     {
         //
         Schema::table('reports', function (Blueprint $table) {
-            $table->char('debug')->nullable()->change();
+            $table->string('debug')->nullable()->change();
         });
     }
 
