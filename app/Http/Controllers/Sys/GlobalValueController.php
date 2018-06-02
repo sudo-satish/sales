@@ -38,7 +38,6 @@ class GlobalValueController extends Controller
      */
     public function store(Request $request)
     {   
-        // echo 'sadf '; exit;
         $request->validate([
             'name' => 'required|max:255',
             'code' => 'required|unique:global_values|max:50',
@@ -47,9 +46,9 @@ class GlobalValueController extends Controller
             'to_date' => 'required|date',
         ]);
 
-        // dd($request->all());
         $globalValue = new GlobalValue();
-        $globalValue->fill($request->all());
+
+        $globalValue->fill($request->except('id')); // <=Error resolved on postgre:  Not null violation: 7 ERROR: null value in column "id" violates not-null constraint 
         $globalValue->save();
         return back()->with('message', 'Global Value saved Sucessfully');
     }
