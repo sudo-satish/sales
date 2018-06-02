@@ -25,3 +25,12 @@ Route::post('rpt/download-report/get-report-list', 'Rpt\DownloadReportController
 Route::resource('rpt/download-report', 'Rpt\DownloadReportController');
 
 Route::get('/home', 'HomeController@index')->name('home');
+
+// =============== Mail Routes =================
+Route::get('/mailable', function () {
+   $data = ['message' => 'This is a test!'];
+
+    Mail::to('satishkumr001@gmail.com')->send(new App\Mail\TestEmail($data));
+
+    // return new App\Mail\TestEmail();
+});
