@@ -50,7 +50,7 @@ class MailController extends Controller
 
         $request->validate($validation);
         $mail = new Mail();
-        $mail->fill($request->all());
+        $mail->fill($request->except(['id']));
         $mail->save();
         return redirect()->back()->withInput()->with('message', 'Mail created successfully!');
     }
@@ -98,7 +98,7 @@ class MailController extends Controller
         ];
 
         $request->validate($validation);
-        $mail->fill($request->all());
+        $mail->fill($request->except(['id']));
         $mail->save();
 
         return redirect('sys/mail/'.$mail->id)->with('message', 'Mail Updated successfully');
