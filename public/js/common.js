@@ -20,7 +20,9 @@ var getModuleName = function(){
 
 // ============ To initiate the resource Obj dynamically ===========
 (function(){
-    eval('resourcesObj = new '+ resourceName +'()')
-    CRO = resourcesObj;
-    resourcesObj.init();
+    if(!_.isEmpty(resourceName)) {
+        eval('resourcesObj = new '+ resourceName +'()')
+        CRO = resourcesObj;
+        resourcesObj.init();
+    }
 })();

@@ -15,10 +15,14 @@
     @yield('resource-body')
 
 </div>
-<script src="{{ asset('js/resources/download-report.js') }}" defer></script>
+
 
 <script>
     resourceName = 'downloadReport';
     moduleName = 'rpt';
 </script>
+
+@if(config('app.debug'))
+<script src="{{ asset('js/resources/download-report.js') }}" defer></script>
+@endif
 @endsection

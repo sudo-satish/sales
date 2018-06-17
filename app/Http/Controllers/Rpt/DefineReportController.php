@@ -159,8 +159,6 @@ class DefineReportController extends Controller
      */
     public function show(Report $defineReport)
     {
-        //
-        // dd($defineReport); 
         return redirect('rpt/define-report/'.$defineReport->id.'/edit');
     }
 
@@ -172,8 +170,6 @@ class DefineReportController extends Controller
      */
     public function edit(Report $defineReport)
     {
-        //
-        // dd($defineReport);
         return view('rpt.define-report.edit', ['report' => $defineReport] );
     }
 

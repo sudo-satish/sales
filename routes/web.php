@@ -23,6 +23,9 @@ Route::post('rpt/download-report/download', 'Rpt\DownloadReportController@downlo
 Route::post('rpt/download-report/get-group-form', 'Rpt\DownloadReportController@getGroupForm');
 Route::post('rpt/download-report/get-report-list', 'Rpt\DownloadReportController@getReportList');
 Route::resource('rpt/download-report', 'Rpt\DownloadReportController');
+Route::post('sys/mail/simulate', 'Sys\MailController@simulate');
+Route::resource('sys/mail', 'Sys\MailController');
+Route::resource('sys/send-mail', 'Sys\SendMailController');
 
 Route::get('/home', 'HomeController@index')->name('home');
 

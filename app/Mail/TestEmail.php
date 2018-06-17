@@ -16,10 +16,11 @@ class TestEmail extends Mailable
      *
      * @return void
      */
-    public function __construct($data)
+    public function __construct($verbose, $subject, $params)
     {
-        //
-        $this->data = $data;
+        $this->verbose = $verbose;
+        $this->subject = $subject;
+        $this->params = $params;
     }
 
     /**
@@ -29,11 +30,15 @@ class TestEmail extends Mailable
      */
     public function build()
     {   
-        $subject = 'This is a demo!';
+        $params = $this->params;
+        
+        $replacedVerbose = $this->verbose;
+        foreach( $params as $index => $value) {
+            $replacedVerbose = str_replace('{'.$index.'}', $value, $replacedVerbose);
+        }
 
-        return $this->view('home')
-                    ->subject($subject)
-                    ->with([ 'message' => $this->data['message'] ]);
-        // return $this->view('mails.test');
+        return $this->view('mails.test')
+                    ->subject($this->subject)
+                    ->with([ 'verbose' => $replacedVerbose ]);
     }
 }

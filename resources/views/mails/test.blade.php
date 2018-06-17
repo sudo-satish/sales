@@ -1,1 +1,1 @@
-<h1> My First mail </h1>
+<?php echo $verbose; ?>

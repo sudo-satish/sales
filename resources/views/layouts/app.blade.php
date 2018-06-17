@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+
 </head>
 <body>
     <div id="app">
@@ -79,6 +80,10 @@
             @yield('content')
         </main>
     </div>
+
+    @if(!config('app.debug'))
+    <script src="{{ asset('js/resources/build/build.js') }}" defer></script>
+    @endif
 
     <script src="{{ asset('js/common.js') }}" defer></script>
 
