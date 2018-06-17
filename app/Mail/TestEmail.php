@@ -33,12 +33,16 @@ class TestEmail extends Mailable
         $params = $this->params;
         
         $replacedVerbose = $this->verbose;
-        foreach( $params as $index => $value) {
-            $replacedVerbose = str_replace('{'.$index.'}', $value, $replacedVerbose);
+        $replacedSubject = $this->subject;
+        if(is_array($params) && !empty($params)) {
+            foreach( $params as $index => $value) {
+                $replacedVerbose = str_replace('{'.$index.'}', $value, $replacedVerbose);
+                $replacedSubject = str_replace('{'.$index.'}', $value, $replacedSubject);
+            }
         }
 
         return $this->view('mails.test')
-                    ->subject($this->subject)
+                    ->subject($replacedSubject)
                     ->with([ 'verbose' => $replacedVerbose ]);
     }
 }
