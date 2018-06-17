@@ -121,6 +121,6 @@ class MailController extends Controller
         $params = json_decode($params, true);
             SendMail::to($request->email)
                 ->send(new TestEmail($mail->verbose, $mail->subject, $params));
-        return redirect()->back()->with('message', 'Mail sent to : '.$request->email);
+        return (new TestEmail($mail->verbose, $mail->subject, $params))->render();
     }
 }
