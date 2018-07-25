@@ -59,6 +59,13 @@ class AuthController extends Controller
         } 
     }
 
+    /**
+     * 
+     */
+    public function forgetPassword() {
+        
+    }
+
     /** 
      * Register api 
      * 

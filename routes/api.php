@@ -20,6 +20,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login', 'Api\AuthController@login');
 Route::post('register', 'Api\AuthController@register');
 
-Route::group(['middleware' => 'auth:api'], function(){
+Route::group(['middleware' => 'auth:api'], function() {
+
+    Route::resource('sys/aureole-lookup', 'Api\Sys\AureoleLookupController');
     Route::get('details', 'Api\AuthController@details');
 });
