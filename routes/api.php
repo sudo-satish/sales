@@ -20,8 +20,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::post('login', 'Api\AuthController@login');
 Route::post('register', 'Api\AuthController@register');
 
+Route::post('password/email', 'Auth\ForgotPasswordController@getResetToken');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset');
+
+Route::resource('sys/aureole-lookup', 'Api\Sys\AureoleLookupController');
 Route::group(['middleware' => 'auth:api'], function() {
 
-    Route::resource('sys/aureole-lookup', 'Api\Sys\AureoleLookupController');
+    // Sys
+
+    // Stock
+    Route::get('stock/tumbrow/get-lov', 'Api\Stock\TumbrowController@getLOV');
+    Route::resource('stock/tumbrow', 'Api\Stock\TumbrowController');
+
     Route::get('details', 'Api\AuthController@details');
 });
