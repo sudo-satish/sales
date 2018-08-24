@@ -33,4 +33,27 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('stock/tumbrow', 'Api\Stock\TumbrowController');
 
     Route::get('details', 'Api\AuthController@details');
+
+    //============ Address Routes ============//
+    Route::get('hrm/address/get-lov', 'Api\Hrm\AddressController@getLOV');
+    Route::resource('hrm/address', 'Api\Hrm\AddressController');
+
+
+    //============ User Routes ============//
+    Route::get('hrm/user/get-user-profile', 'Api\Hrm\UserController@getUserProfile');
+    Route::put('hrm/user/update-user-profile', 'Api\Hrm\UserController@updateUserProfile');
+    Route::get('hrm/user/get-profile-lov', 'Api\Hrm\UserController@getProfileLov');
+
+    //============ Department Routes ============//
+    Route::resource('hrm/department', 'Api\Hrm\DepartmentController');
+    
+    //============ Designation Routes ============//
+    Route::resource('hrm/designation', 'Api\Hrm\DesignationController');
+    
+    //============ Location Routes ============//
+    Route::resource('hrm/location', 'Api\Hrm\LocationController');
+
 });
+
+
+
