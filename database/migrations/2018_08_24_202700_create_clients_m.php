@@ -18,7 +18,6 @@ class CreateClientsM extends Migration
 
             $table->string('client_name');
             $table->longText('head_office_address')->nullable();
-            $table->integer('order')->nullable();
             $table->string('pan')->nullable();
             $table->string('gst')->nullable();
             $table->integer('billto_client_id')->nullable();

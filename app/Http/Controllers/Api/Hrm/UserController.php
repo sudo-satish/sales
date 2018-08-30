@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 
 class UserController extends Controller
@@ -50,20 +51,22 @@ class UserController extends Controller
     public function store(Request $request)
     {   
         $request->validate([
-            'address_line_one' => 'required|max:255',
-            'address_line_two' => 'required|max:255',
-            'city_id' => 'required',
-            'state_id' => 'required',
-            'pincode' => 'required',
-            'type' => 'required',
+            'name' => 'required|max:255',
+            'email' => 'required|email',
+            'email_official' => 'required|email',
+            'designation_id' => 'required|max:255',
+            'location_id' => 'required',
+            'department_id' => 'required',
+            'roles_id' => 'required',
+            'employee_code' => 'required',
         ]);
 
-        $address = new Address();
+        $user = new User();
 
-        $address->fill($request->except('id')); // <=Error resolved on postgre:  Not null violation: 7 ERROR: null value in column "id" violates not-null constraint 
-        $address->user_id = Auth::id();
-        $address->save();
-        return $address;
+        $user->fill($request->except('id')); // <=Error resolved on postgre:  Not null violation: 7 ERROR: null value in column "id" violates not-null constraint 
+        $user->password = Hash::make($request->input('email'));
+        $user->save();
+        return $user;
     }
 
     /**
@@ -72,12 +75,12 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Address $address)
+    public function update(Request $request, User $user)
     {
 
-        $address->fill($request->all());
-        $address->save();
-        return $address;
+        $user->fill($request->all());
+        $user->save();
+        return $user;
     }
 
     /**

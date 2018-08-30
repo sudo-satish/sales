@@ -37,12 +37,19 @@ Route::group(['middleware' => 'auth:api'], function() {
     //============ Address Routes ============//
     Route::get('hrm/address/get-lov', 'Api\Hrm\AddressController@getLOV');
     Route::resource('hrm/address', 'Api\Hrm\AddressController');
+    
+    
+    //============ Address Routes ============//
+    Route::get('hrm/client-address/get-client-address/{clientId}', 'Api\Hrm\ClientAddressController@getCLientAddress');
+    Route::get('hrm/client-address/get-lov', 'Api\Hrm\ClientAddressController@getLOV');
+    Route::resource('hrm/client-address', 'Api\Hrm\ClientAddressController');
 
 
     //============ User Routes ============//
     Route::get('hrm/user/get-user-profile', 'Api\Hrm\UserController@getUserProfile');
     Route::put('hrm/user/update-user-profile', 'Api\Hrm\UserController@updateUserProfile');
-    Route::get('hrm/user/get-profile-lov', 'Api\Hrm\UserController@getProfileLov');
+    Route::get('hrm/user/get-lov', 'Api\Hrm\UserController@getProfileLov');
+    Route::resource('hrm/user', 'Api\Hrm\UserController');
 
     //============ Department Routes ============//
     Route::resource('hrm/department', 'Api\Hrm\DepartmentController');
@@ -52,6 +59,12 @@ Route::group(['middleware' => 'auth:api'], function() {
     
     //============ Location Routes ============//
     Route::resource('hrm/location', 'Api\Hrm\LocationController');
+    
+    //============ Client Routes ============//
+    Route::resource('hrm/client', 'Api\Hrm\ClientController');
+    
+    //============ Pricing Plan Routes ============//
+    Route::resource('hrm/pricing-plan', 'Api\Hrm\PricingPlanController');
 
 });
 
