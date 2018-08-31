@@ -17,6 +17,14 @@ Route::get('/', function () {
 
 Auth::routes();
 
+
+Route::fallback(function () {
+    return view('angular');
+});
+// Route::get('/angular/*', function() {
+//     return view('angular');
+// });
+
 Route::resource('sys/global-value', 'Sys\GlobalValueController');
 Route::resource('rpt/define-report', 'Rpt\DefineReportController');
 Route::post('rpt/download-report/download', 'Rpt\DownloadReportController@downloadReport');

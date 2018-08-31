@@ -64,6 +64,9 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('hrm/client', 'Api\Hrm\ClientController');
     
     //============ Pricing Plan Routes ============//
+    //getCLientPlan
+    Route::get('hrm/pricing-plan/get-client-plan/{clientId}', 'Api\Hrm\PricingPlanController@getCLientPlan');
+    Route::get('hrm/pricing-plan/get-lov', 'Api\Hrm\PricingPlanController@getLOV');
     Route::resource('hrm/pricing-plan', 'Api\Hrm\PricingPlanController');
 
 });

@@ -20,6 +20,17 @@ class PricingPlanController extends Controller
         return PricingPlan::all();
     }
 
+    public function getCLientPlan(Request $request, $clientId) {
+        return PricingPlan::where('client_id', $clientId)->get();
+    }
+
+    /**
+     * Get LOV
+     */
+    public function getLov() {
+        return PricingPlan::getLOV();
+    }
+
     /**
      * Store a newly created resource in storage.
      *
