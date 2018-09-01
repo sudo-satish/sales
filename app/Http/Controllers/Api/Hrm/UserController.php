@@ -52,7 +52,7 @@ class UserController extends Controller
     {   
         $request->validate([
             'name' => 'required|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'email_official' => 'required|email',
             'designation_id' => 'required|max:255',
             'location_id' => 'required',
