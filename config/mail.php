@@ -84,11 +84,11 @@ return [
     |
     */
 
-    // 'username' => env('MAIL_USERNAME'),
-    'username' => 'apikey',
+    'username' => env('MAIL_USERNAME'),
+    // 'username' => 'apikeylikethikey',
 
-    // 'password' => env('MAIL_PASSWORD'),
-    'password' => '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',
+    'password' => env('MAIL_PASSWORD'),
+    // 'password' => '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',
 
     /*
     |--------------------------------------------------------------------------

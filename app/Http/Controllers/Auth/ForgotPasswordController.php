@@ -60,10 +60,10 @@ class ForgotPasswordController extends Controller
         switch ($response) {
             case Password::RESET_LINK_SENT:
                 // return redirect()->back()->with('status', trans($response));
-                return ['status'=> trans($response), 'message' => 'Reset password link sent to you email'];
+                return ['status_code' => 200,'status'=> trans($response), 'message' => 'Reset password link sent to you email'];
             case Password::INVALID_USER:
                 // return redirect()->back()->withErrors(['email' => trans($response)]);
-                return ['status'=> trans($response), 'message' => 'Email not registered'];
+                return ['status_code' => 403,'status'=> trans($response), 'message' => 'Email not registered'];
         }
     }
 }
