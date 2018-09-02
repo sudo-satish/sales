@@ -20,4 +20,12 @@ class Client extends Model
      */
     protected $dates = ['deleted_at'];
 
+    public function users() {
+        return $this->hasMany('App\User', 'client_id');
+    }
+    
+    public function billTo() {
+        // Work as thistable join App\Http\Models\Hrm\Client c on c.id = thistbl.billto_client_id 
+        return $this->hasOne('App\Http\Models\Hrm\Client', 'id', 'billto_client_id');
+    }
 }

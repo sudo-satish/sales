@@ -48,6 +48,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     //============ User Routes ============//
     Route::get('hrm/user/get-user-profile', 'Api\Hrm\UserController@getUserProfile');
     Route::put('hrm/user/update-user-profile', 'Api\Hrm\UserController@updateUserProfile');
+    Route::post('hrm/user/update-user-profile', 'Api\Hrm\UserController@updateUserProfile');
     Route::get('hrm/user/get-lov', 'Api\Hrm\UserController@getProfileLov');
     Route::resource('hrm/user', 'Api\Hrm\UserController');
 
@@ -71,5 +72,12 @@ Route::group(['middleware' => 'auth:api'], function() {
 
 });
 
+
+Route::prefix('pla')->group(function () {
+    Route::namespace('Api\Pla')->group(function () {
+        
+        Route::post('playground', 'PlaController@index');
+    });
+});
 
 

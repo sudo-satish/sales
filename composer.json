@@ -13,6 +13,7 @@
         "laravel/passport": "^6.0",
         "laravel/tinker": "^1.0",
         "laravelcollective/html": "^5.4.0",
+        "league/flysystem-aws-s3-v3": "~1.0",
         "phpoffice/phpspreadsheet": "^1.2"
     },
     "require-dev": {

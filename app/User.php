@@ -61,4 +61,44 @@ class User extends Authenticatable
         return [ 'departments' => $departments, 'designations' => $designations, 'locations' => $locations,  'roles' => $roles];
     }
 
+    public static function getLov()
+    {
+        $departments =  DB::table('ut_hrm_department_m')
+                ->select('id as code', 'name as meaning')
+                ->where('active', '=', 'Y')
+                ->orderBy('order', 'asc')
+                ->get();
+        
+        $designations =  DB::table('ut_hrm_designation_m')
+                ->select('id as code', 'name as meaning')
+                ->where('active', '=', 'Y')
+                ->orderBy('order', 'asc')
+                ->get();
+        
+        $locations =  DB::table('ut_hrm_location_m')
+                ->select('id as code', 'name as meaning')
+                ->where('active', '=', 'Y')
+                ->orderBy('order', 'asc')
+                ->get();
+
+        $rolesTrans = 'ROLES';
+        $roles =  DB::table('aureole_lookups')
+            ->select('code', 'meaning', 'tip')
+            ->where([['translation_type', '=', $rolesTrans], ['active', '=', 'Y']])
+            ->orderBy('order', 'asc')
+            ->get();
+
+        return [ 'departments' => $departments, 'designations' => $designations, 'locations' => $locations,  'roles' => $roles];
+    }
+
+
+    /**
+     * Get the phone record associated with the user.
+     */
+    public function client()
+    {
+        return $this->belongsTo('App\Http\Models\Hrm\Client');
+    }
+
+
 }

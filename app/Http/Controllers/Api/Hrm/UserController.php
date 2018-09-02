@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Hrm;
 
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -29,9 +30,23 @@ class UserController extends Controller
     }
 
     public function updateUserProfile(Request $request)
-    {
-        $user = Auth::user();
-        $user->fill($request->except(['id', 'email', 'password', 'created_at', 'updated_at']));
+    {   
+        $userId = $request->input('id');
+        if(empty($userId)) {
+            $response = ['message'=>'id is mendatory field', 'error'=>'id is mendatory field'];
+            return response($response, 403); // ->withStatus(403)->send();
+        }
+
+        $user = User::find($userId);
+        $updateData = $request->except(['id', 'email', 'password', 'created_at', 'updated_at', 'profile_image']);
+
+        $profileImage = $request->file('profile_image');
+        $profilePath = $this->getS3ProfileImagePath($user);
+        $newFilePath = $profilePath.'.'.$profileImage->getClientOriginalExtension();
+        
+        $pfile = Storage::put($profileImage, $newFilePath);
+        $user->profile_image = $pfile;
+        $user->fill($updateData);
         $user->save();
 
         return $user;
@@ -52,6 +67,7 @@ class UserController extends Controller
     {   
         $request->validate([
             'name' => 'required|max:255',
+            'client_id' => 'required|max:255',
             'email' => 'required|email|unique:users',
             'email_official' => 'required|email',
             'designation_id' => 'required|max:255',
@@ -95,5 +111,10 @@ class UserController extends Controller
         $aureoleLookup->delete();
         // return Response::
         return response()->json(['response' => 'Deleted Successfully']);
+    }
+
+    // S3 : client/{Client_id}/user/{user_id}_{user_name}/{module_name}/{resource_name}/{file_name}
+    public function getS3ProfileImagePath(User $user) {
+        return "client/".$user->client_id."/user/$user->id"."_".snake_case($user->name)."/Hrm/user/profile_".snake_case($user->name);
     }
 }
