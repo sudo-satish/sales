@@ -49,7 +49,8 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('hrm/user/get-user-profile', 'Api\Hrm\UserController@getUserProfile');
     Route::put('hrm/user/update-user-profile', 'Api\Hrm\UserController@updateUserProfile');
     Route::post('hrm/user/update-user-profile', 'Api\Hrm\UserController@updateUserProfile');
-    Route::get('hrm/user/get-lov', 'Api\Hrm\UserController@getProfileLov');
+    Route::post('hrm/user/get-user-profile-image', 'Api\Hrm\UserController@getUserProfileImage');
+    Route::get('hrm/user/get-lov', 'Api\Hrm\UserController@getLov');
     Route::resource('hrm/user', 'Api\Hrm\UserController');
 
     //============ Department Routes ============//
@@ -62,6 +63,7 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::resource('hrm/location', 'Api\Hrm\LocationController');
     
     //============ Client Routes ============//
+    Route::get('hrm/client/search-client', 'Api\Hrm\ClientController@searchClient');
     Route::resource('hrm/client', 'Api\Hrm\ClientController');
     
     //============ Pricing Plan Routes ============//

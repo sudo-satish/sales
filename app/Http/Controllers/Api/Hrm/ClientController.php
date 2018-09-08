@@ -16,8 +16,13 @@ class ClientController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        return Client::all();
+    {   
+        $clients = Client::all();
+        foreach ($clients as $key => $client) {
+            # code...
+            $client->billtoClientId;
+        }
+        return $clients;
     }
 
     /**
@@ -36,10 +41,17 @@ class ClientController extends Controller
             'credit_limit' => 'required',
             'balance' => 'required',
         ]);
-
+        
         $client = new Client();
 
-        $client->fill($request->except('id')); // <=Error resolved on postgre:  Not null violation: 7 ERROR: null value in column "id" violates not-null constraint 
+        $client->fill($request->except('id', 'billto_client_id')); // <=Error resolved on postgre:  Not null violation: 7 ERROR: null value in column "id" violates not-null constraint 
+        
+        if(is_array( $request->input('billto_client_id'))) {
+            $client->billto_client_id = $request->input('billto_client_id')['id'];
+        } else {
+            $client->billto_client_id = $request->input('billto_client_id');
+        }
+        
         $client->save();
         return $client;
     }
@@ -54,6 +66,13 @@ class ClientController extends Controller
     {
 
         $client->fill($request->all());
+
+        if(is_array( $request->input('billto_client_id'))) {
+            $client->billto_client_id = $request->input('billto_client_id')['id'];
+        } else {
+            $client->billto_client_id = $request->input('billto_client_id');
+        }
+        
         $client->save();
         return $client;
     }
@@ -70,5 +89,9 @@ class ClientController extends Controller
         $aureoleLookup->delete();
         // return Response::
         return response()->json(['response' => 'Deleted Successfully']);
+    }
+
+    public function searchClient(Request $request) {
+        return Client::searchClient($request->query('searchTxt'));
     }
 }

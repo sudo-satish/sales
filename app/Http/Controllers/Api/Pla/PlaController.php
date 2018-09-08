@@ -18,6 +18,8 @@ class PlaController extends Controller
      */
     public function index(Request $request)
     {
+        // client/{Client_id}/user/{user_id}_{user_name}/{module_name}/{resource_name}/{file_name}
+        
         // $filePath = 'user/Screenshot.png';
         // return Storage::download($filePath);
         $users = (new User())->with('client')->get();

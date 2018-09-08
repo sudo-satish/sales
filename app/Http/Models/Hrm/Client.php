@@ -24,8 +24,14 @@ class Client extends Model
         return $this->hasMany('App\User', 'client_id');
     }
     
-    public function billTo() {
+    public function billtoClientId() {
         // Work as thistable join App\Http\Models\Hrm\Client c on c.id = thistbl.billto_client_id 
         return $this->hasOne('App\Http\Models\Hrm\Client', 'id', 'billto_client_id');
+    }
+
+    public static function searchClient($searchTxt) {
+        return DB::table('ut_hrm_client_m')
+                ->where("client_name", "like", "%".$searchTxt."%")
+                ->get();
     }
 }

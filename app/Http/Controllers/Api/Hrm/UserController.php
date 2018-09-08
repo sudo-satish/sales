@@ -41,20 +41,34 @@ class UserController extends Controller
         $updateData = $request->except(['id', 'email', 'password', 'created_at', 'updated_at', 'profile_image']);
 
         $profileImage = $request->file('profile_image');
+
         $profilePath = $this->getS3ProfileImagePath($user);
-        $newFilePath = $profilePath.'.'.$profileImage->getClientOriginalExtension();
+        $fileName = $this->profileImageName($user, $profileImage);
         
-        $pfile = Storage::put($profileImage, $newFilePath);
-        $user->profile_image = $pfile;
+        $user->profile_image = $profilePath.'/'.$fileName;
         $user->fill($updateData);
         $user->save();
+        $p = Storage::putFileAs($profilePath, $profileImage, $fileName, 'public');
+
 
         return $user;
+    }
+
+    public function getUserProfileImage(Request $request) {
+        $user = User::find($request->input('id'));
+
+        // return Storage::download($user->profile_image);
+        return Storage::url($user->profile_image);
     }
 
     public function getProfileLov(Request $request)
     {
         return User::getProfileLov();
+    }
+    
+    public function getLov(Request $request)
+    {
+        return User::getLov();
     }
 
     /**
@@ -115,6 +129,10 @@ class UserController extends Controller
 
     // S3 : client/{Client_id}/user/{user_id}_{user_name}/{module_name}/{resource_name}/{file_name}
     public function getS3ProfileImagePath(User $user) {
-        return "client/".$user->client_id."/user/$user->id"."_".snake_case($user->name)."/Hrm/user/profile_".snake_case($user->name);
+        return "client/".$user->client_id."/user/$user->id"."_".snake_case($user->name)."/Hrm/user";
+    }
+
+    public function profileImageName(User $user, $file) {
+        return "profile_".snake_case($user->name).'.'.$file->getClientOriginalExtension();;
     }
 }
