@@ -46,4 +46,17 @@ class AureoleLookup extends Model
 
         // return Self::find(['translation_type' => $translationType, 'active'=>'Y'])->orderBy('order', 'asc');
     }
+
+    public static function getTranslations() {
+        return DB::table('aureole_lookups')
+                ->select('translation_type')
+                ->groupBy('translation_type')
+                ->get();
+    }
+    
+    public static function getTranslationDetail($translationType) {
+        return DB::table('aureole_lookups')
+        ->where('translation_type', '=', $translationType)
+        ->get();
+    }
 }

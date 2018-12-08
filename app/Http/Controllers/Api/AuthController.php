@@ -78,6 +78,7 @@ class AuthController extends Controller
             'email' => 'required|email', 
             'password' => 'required', 
             'c_password' => 'required|same:password', 
+            'client_id' => 'required', 
         ]);
 
         // $input = $request->all(); 
@@ -85,6 +86,7 @@ class AuthController extends Controller
         // $user = User::create($input); 
         
         $user = User::firstOrNew(['email' => $request->email]);
+        $user->client_id = $request->client_id;
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = bcrypt($request->password);

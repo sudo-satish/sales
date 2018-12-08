@@ -68,7 +68,13 @@ class AureoleLookupController extends Controller
     {
         //
         $aureoleLookup->delete();
-        // return Response::
         return response()->json(['response' => 'Deleted Successfully']);
+    }
+
+    public function translations(Request $request) {
+        return AureoleLookup::getTranslations();
+    }
+    public function getTranslationDetail(Request $request, $translationType) {
+        return AureoleLookup::getTranslationDetail($translationType);
     }
 }

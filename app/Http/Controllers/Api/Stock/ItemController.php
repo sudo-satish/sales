@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api\Stock;
 
-use App\Http\Models\Stock\Tumbrow;
+use App\Http\Models\Stock\Item;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
-class TumbrowController extends Controller
+class ItemController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +16,7 @@ class TumbrowController extends Controller
      */
     public function index()
     {
-        return Tumbrow::getLOV();
+        return Item::all();
     }
 
 
@@ -28,17 +29,22 @@ class TumbrowController extends Controller
     public function store(Request $request)
     {   
         $request->validate([
-            'translation_type' => 'required|max:255',
-            'code' => 'required|max:50',
-            'meaning' => 'required',
-            'order' => 'required',
+            'item_name' => 'required|max:255',
+            'item_code' => 'required|unique:ut_stock_item_m',
+            'bf' => 'required',
+            'gst' => 'required',
         ]);
 
-        $lookup = new AureoleLookup();
+        if(!Item::isUnique($request->except('id'))) {
+            return response(["message"=> "Duplicate item name, bf, gsm combination."], 422);
+        }
 
-        $lookup->fill($request->except('id')); // <=Error resolved on postgre:  Not null violation: 7 ERROR: null value in column "id" violates not-null constraint 
-        $lookup->save();
-        return $lookup;
+        $item = new Item();
+
+        $item->fill($request->except('id')); // <= Error resolved on postgre:  Not null violation: 7 ERROR: null value in column "id" violates not-null constraint 
+        $item->user_id = Auth::id();
+        $item->save();
+        return $item;
     }
 
     /**
@@ -61,7 +67,7 @@ class TumbrowController extends Controller
      * @param  \App\GlobalValue  $globalValue
      * @return \Illuminate\Http\Response
      */
-    public function destroy(AureoleLookup $aureoleLookup)
+    public function destroy(Item $item)
     {
         //
         $aureoleLookup->delete();
@@ -69,11 +75,28 @@ class TumbrowController extends Controller
         return response()->json(['response' => 'Deleted Successfully']);
     }
 
-    
     /**
      * Get List of values for form
      */
     public function getLOV() {
-        return Tumbrow::getLOV();
+        return Item::getLOV();
+    }
+    
+    public function getItemCode(Request $request) {
+        
+        $request->validate([
+            'item_name' => 'required',
+        ]);
+        
+        $itemName = $request->item_name;
+        $itemName = trim($itemName);
+
+        $names = explode(' ', $itemName);
+        $codePrefix = '';
+        forEach($names as $name) {
+           $codePrefix .= ucfirst($name)[0];
+        }
+
+        return Item::getItemCode($codePrefix);
     }
 }

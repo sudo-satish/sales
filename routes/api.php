@@ -23,7 +23,10 @@ Route::post('register', 'Api\AuthController@register');
 Route::post('password/email', 'Auth\ForgotPasswordController@getResetToken');
 Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 
+Route::get('sys/aureole-lookup/translation/{translationType}', 'Api\Sys\AureoleLookupController@getTranslationDetail');
+Route::get('sys/aureole-lookup/translations', 'Api\Sys\AureoleLookupController@translations');
 Route::resource('sys/aureole-lookup', 'Api\Sys\AureoleLookupController');
+
 Route::group(['middleware' => 'auth:api'], function() {
 
     // Sys
@@ -72,12 +75,25 @@ Route::group(['middleware' => 'auth:api'], function() {
     Route::get('hrm/pricing-plan/get-lov', 'Api\Hrm\PricingPlanController@getLOV');
     Route::resource('hrm/pricing-plan', 'Api\Hrm\PricingPlanController');
 
+    Route::group(["prefix"=>"stock", "namespace" => "Api\Stock"], function() {
+        Route::post('item/get-item-code', 'ItemController@getItemCode');
+        Route::get('item/get-lov', 'ItemController@getLov');
+        Route::resource('item', 'ItemController');
+    });
+
+    Route::group(["prefix"=>"stock", "namespace" => "Api\Stock"], function() {
+        Route::resource('price-mapping', 'PriceMappingController');
+    });
+
+    Route::group(["prefix"=>"stock", "namespace" => "Api\Stock"], function() {
+        Route::resource('default-price-mapping', 'DefaultPriceMappingController');
+    });
+
 });
 
 
 Route::prefix('pla')->group(function () {
     Route::namespace('Api\Pla')->group(function () {
-        
         Route::post('playground', 'PlaController@index');
     });
 });
