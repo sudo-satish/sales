@@ -32,4 +32,12 @@ class PriceMapping extends Model
 
         return count($item) == 0;
     }
+
+    /**
+     * Get the user that owns the phone.
+     */
+    public function user()
+    {
+        return $this->belongsTo('App\User');
+    }
 }

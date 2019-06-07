@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Stock;
 
 use App\Http\Models\Stock\Item;
+use App\Http\Models\Stock\PriceMapping;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -16,9 +17,64 @@ class ItemController extends Controller
      */
     public function index()
     {
-        return Item::all();
+        $items = Item::all();
+
+        foreach ($items as $key => $item) {
+            # code...
+            $item->gsm = Item::getLookup($item->gsm, 'GSM'); //BF,GSM
+            $item->bf = Item::getLookup($item->bf, 'BF');
+            $item->price_mapping = PriceMapping::where('item_id', $item->id)->get();
+        }
+
+        return $items;
     }
 
+    /**
+     * Returns deleted Items
+     */
+    public function deleteGSM(Request $request, $itemId, $gsmCode)
+    {
+        $priceM = PriceMapping::where(['item_id'=> $itemId, 'gsm' => $gsmCode])->get();
+
+        $item = Item::find($itemId);
+        $gsm = $item->gsm;
+        $gsmArray = explode(",", $gsm);
+
+        if(in_array($gsmCode, $gsmArray)) {
+            $arrayDiff = array_diff($gsmArray, [$gsmCode]);
+            $item->gsm = implode($arrayDiff);
+            $item->save();
+        }
+
+        foreach ($priceM as $key => $value) {
+            $value->delete();
+        }
+
+        return $priceM;
+    }
+
+    /**
+     * returns deleted BF
+     */
+    public function deleteBF(Request $request, $itemId, $bfCode)
+    {
+        $priceM = PriceMapping::where(['item_id'=> $itemId, 'bf' => $bfCode])->get();
+        $item = Item::find($itemId);
+        $bf = $item->bf;
+        $bfArray = explode(",", $bf);
+
+        if(in_array($bfCode, $bfArray)) {
+            $arrayDiff = array_diff($bfArray, [$bfCode]);
+            $item->bf = implode($arrayDiff);
+            $item->save();
+        }
+
+        foreach ($priceM as $key => $value) {
+            $value->delete();
+        }
+
+        return $priceM;
+    }
 
     /**
      * Store a newly created resource in storage.

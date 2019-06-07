@@ -39,7 +39,7 @@ class AureoleLookup extends Model
     public static function getLOV($translationType) {
         return DB::table('aureole_lookups')
             ->select('code', 'meaning', 'tip')
-            ->where([['translation_type', '=', $translationType], ['active', '=', 'Y']])
+            ->where([['translation_type', '=', $translationType], ['active', '=', 'Y'], ['deleted_at', '=', null]])
             ->orderBy('order', 'asc')
             ->get();
             // ->toSql();

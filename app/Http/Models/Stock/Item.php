@@ -15,9 +15,32 @@ class Item extends Model
 
     public static function getLOV() {
         $lov = [];
-        $lov['BF'] = AureoleLookup::getLov('BF');
+        $lov['BF'] = AureoleLookup::getLov('BF'); // BF,GSM
         $lov['GSM'] = AureoleLookup::getLov('GSM');
         return $lov;
+    }
+
+    public static function getLookup($codes, $translation) {
+        // return AureoleLookup::where([['transalation', $translation], ['code','in', $codes]])->get();
+        // dd(explode(',', $codes));
+        // dd(DB::table('aureole_lookups')
+        // ->where('translation_type', $translation)
+        // ->whereIn('code', explode(',', $codes))->toSql()
+        // );
+
+        // dd($translation);
+
+        // SELECT * FROM `aureole_lookups` WHERE `translation_type` = 'BF' AND CODE IN ('BF50');
+        // $query = "SELECT * FROM `aureole_lookups` WHERE `translation_type` = '$translation' AND FIND_IN_SET(CODE,  '$codes')";
+
+        // dd($query);
+        // $data = DB::select($query);
+
+        // dd($data);
+        return DB::table('aureole_lookups')
+            ->where([['translation_type','=' ,$translation]])
+            ->whereIn('code', explode(',', $codes))
+            ->get();
     }
 
     public static function getItemCode($codePrefix) {

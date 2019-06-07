@@ -77,6 +77,8 @@ Route::group(['middleware' => 'auth:api'], function() {
 
     Route::group(["prefix"=>"stock", "namespace" => "Api\Stock"], function() {
         Route::post('item/get-item-code', 'ItemController@getItemCode');
+        Route::delete('item/{itemId}/gsm/{gsmCode}', 'ItemController@deleteGSM');
+        Route::delete('item/{itemId}/bf/{bfCode}', 'ItemController@deleteBF');
         Route::get('item/get-lov', 'ItemController@getLov');
         Route::resource('item', 'ItemController');
     });
